@@ -18,8 +18,8 @@ import java.util.List;
 @Table(name = "MNDL_COURSES")
 public class Course {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "COURSE_ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotNull
@@ -28,24 +28,28 @@ public class Course {
     @Column(name = "COURSE_SIZE")
     private Integer size;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "GROUP_ID", nullable = false)
     private Group group;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "SUBJECT_ID", nullable = false)
     private Subject subject;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "TEACHER_ID")
     private Teacher teacher;
 
-    //@ElementCollection
-    //@CollectionTable(name = "COURSE_POSSIBLE_CLASSROOMS", joinColumns = @JoinColumn(name = "COURSE_ID"))
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "course_classrooms", joinColumns = @JoinColumn(name = "COURSE_ID"),
             inverseJoinColumns = @JoinColumn(name = "CLASSROOM_ID"))
     private List<Classroom> classrooms;
+
+    public Course() {
+    }
 
     public Long getId() {
         return id;
@@ -91,8 +95,8 @@ public class Course {
         return classrooms;
     }
 
-    public void setClassrooms(List<Classroom> possibleClassrooms) {
-        this.classrooms = possibleClassrooms;
+    public void setClassrooms(List<Classroom> classrooms) {
+        this.classrooms = classrooms;
     }
 
     @Override

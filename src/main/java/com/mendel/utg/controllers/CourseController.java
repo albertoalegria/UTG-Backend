@@ -1,7 +1,10 @@
 package com.mendel.utg.controllers;
 
+import com.mendel.utg.models.Classroom;
 import com.mendel.utg.models.Course;
+import com.mendel.utg.repositories.ClassroomRepository;
 import com.mendel.utg.repositories.CourseRepository;
+import com.mendel.utg.repositories.GroupRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,8 @@ import java.util.List;
 public class CourseController {
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private GroupRepository groupRepository;
 
     private Log log = LogFactory.getLog(CourseController.class);
 
@@ -30,9 +35,21 @@ public class CourseController {
         return new ResponseEntity<List<Course>>(courseRepository.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping("courses/group")
+    public ResponseEntity<List<Course>> getByGroup(@RequestParam long id) {
+        log.info("Retrieving all courses for group with id " + id);
+
+        if (!groupRepository.exists(id)) {
+            log.info("Cannot obtain courses. Group with id " + id + " does not exists!");
+            return new ResponseEntity<List<Course>>(HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<List<Course>>(groupRepository.findOne(id).getCourses(), HttpStatus.OK);
+        }
+    }
+
     @PostMapping("course")
     public ResponseEntity<Void> create(@Validated @RequestBody Course course) {
-        log.info("Created course for subject " + course.getSubject().getName());
+        log.info("Created course " + course.getGroup().getSemester() + "-" + course.getGroup().getShift().getSimpleName() + ", " + course.getSubject().getName());
         courseRepository.save(course);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }

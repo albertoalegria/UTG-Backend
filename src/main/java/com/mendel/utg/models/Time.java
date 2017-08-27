@@ -5,6 +5,11 @@ import com.mendel.utg.utils.enums.Shift;
 
 import javax.persistence.Embeddable;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import static com.mendel.utg.utils.Global.*;
 
 /**
@@ -36,6 +41,38 @@ public class Time {
 
     public boolean isInSameDay(Time time) {
         return this.day.equals(time.getDay());
+    }
+
+    public String get24hTime() {
+        return get24hTime(fancyHourOfDay);
+    }
+
+    public String getAmPmTime() {
+        return getAmPmTime(fancyHourOfDay);
+    }
+
+    public String getAmPmTime2() {
+        return getAmPmTime(fancyHourOfDay + 1);
+    }
+
+    private Date getCalendarHour(int hour) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, 0);
+
+        return calendar.getTime();
+    }
+
+    public String get24hTime(int hour) {
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+
+        return dateFormat.format(getCalendarHour(hour));
+    }
+
+    public String getAmPmTime(int hour) {
+        DateFormat dateFormat = new SimpleDateFormat("hh:mm a");
+
+        return dateFormat.format(getCalendarHour(hour));
     }
 
     public int getId() {

@@ -1,11 +1,14 @@
 package com.mendel.utg.controllers;
 
 import com.mendel.utg.models.Group;
+import com.mendel.utg.models.Time;
 import com.mendel.utg.repositories.CareerRepository;
 import com.mendel.utg.repositories.CurriculumRepository;
 import com.mendel.utg.repositories.GroupRepository;
+import com.mendel.utg.utils.Utils;
 import com.mendel.utg.utils.enums.Day;
 import com.mendel.utg.utils.enums.Shift;
+import com.mendel.utg.utils.enums.StudyLevel;
 import com.mendel.utg.utils.enums.Type;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -92,4 +95,57 @@ public class UtilsController {
         }
         return new ResponseEntity<List<Integer>>(semesters, HttpStatus.OK);
     }
+
+    @GetMapping("utils/levels")
+    public ResponseEntity<StudyLevel[]> getStudyLevels() {
+        log.info("Retrieving study levels");
+        return new ResponseEntity<StudyLevel[]>(StudyLevel.values(), HttpStatus.OK);
+    }
+
+    @GetMapping("utils/levels/abbr")
+    public ResponseEntity<String> getStudyAbbr(@RequestParam String title) {
+        log.info("Retrieving abbreviation for " + title);
+
+        StudyLevel level;
+
+        if (title.equals(StudyLevel.BACHELOR.getName())) {
+            level = StudyLevel.BACHELOR;
+        } else if (title.equals(StudyLevel.MASTER.getName())) {
+            level = StudyLevel.MASTER;
+        } else if (title.equals(StudyLevel.PHD.getName())) {
+            level = StudyLevel.PHD;
+        } else {
+            log.error("Cannot obtain abbreviation for " + title + ". Study level does not exists!");
+            return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<String>(level.getAbbr(), HttpStatus.OK);
+    }
+
+    /*
+    * TODO fix the check in and check out hours 25/08
+    * Times are rendered incorrectly
+    *
+    * nvm i already fix it 26/08
+    * */
+    @GetMapping("utils/times/checkIn")
+    public ResponseEntity<List<String>> getCheckInTimes() {
+        List<Time> times = Utils.Times.getTimesRange(1, 14);//FIXME
+        List<String> checkIn = new ArrayList<>();
+
+        times.forEach(time -> checkIn.add(time.getAmPmTime()));
+
+        return new ResponseEntity<List<String>>(checkIn, HttpStatus.OK);
+    }
+
+    @GetMapping("utils/times/checkOut")
+    public ResponseEntity<List<String>> getCheckOutTimes() {
+        List<Time> times = Utils.Times.getTimesRange(1, 14);//FIXME
+        List<String> checkOut = new ArrayList<>();
+
+        times.forEach(time -> checkOut.add(time.getAmPmTime2()));
+
+        return new ResponseEntity<List<String>>(checkOut, HttpStatus.OK);
+    }
+
 }

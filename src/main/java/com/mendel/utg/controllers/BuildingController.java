@@ -2,7 +2,8 @@ package com.mendel.utg.controllers;
 
 import com.mendel.utg.models.Building;
 import com.mendel.utg.repositories.BuildingRepository;
-import org.apache.commons.io.IOUtils;
+
+import com.mendel.utg.utils.enums.Type;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Alberto Alegria
@@ -43,6 +45,25 @@ public class BuildingController {
     public ResponseEntity<List<Building>> getAll() {
         log.info("Retrieving all the buildings");
         return new ResponseEntity<>(buildingRepository.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("buildings/classroom")
+    public ResponseEntity<List<Building>> getAllByClassroomType(@RequestParam String type) {
+        List<Building> buildings = buildingRepository.findAll();
+        if (type.equals(Type.CLASSROOM.getName())) {
+            log.info("Retrieving buildings that contains at least one classroom with type " + Type.CLASSROOM.getName());
+            buildings = buildings.stream().filter(building -> building.getClassrooms().stream().filter(classroom ->
+                    classroom.getType().equals(Type.CLASSROOM)).count() > 0).collect(Collectors.toList());
+        } else if (type.equals(Type.LABORATORY.getName())) {
+            log.info("Retrieving buildings that contains at least one classroom with type " + Type.LABORATORY.getName());
+            buildings = buildings.stream().filter(building -> building.getClassrooms().stream().filter(classroom ->
+                    classroom.getType().equals(Type.LABORATORY)).count() > 0).collect(Collectors.toList());
+        } else {
+            log.info("Cannot retrieve buildings. Type " + type + " does not exists!");
+            return new ResponseEntity<List<Building>>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<List<Building>>(buildings, HttpStatus.OK);
     }
 
     @PostMapping("building")

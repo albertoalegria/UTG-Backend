@@ -25,7 +25,8 @@ public final class Utils {
         }
 
         public static List<Time> getTimesArray(int first, int last) {
-            return getAllTimes().stream().filter(time -> time.getHourOfDay() >= first && time.getHourOfDay() <= last).collect(Collectors.toList());
+            return getAllTimes().stream().filter(time -> time.getHourOfDay() >= first && time.getHourOfDay() <= last)
+                    .collect(Collectors.toList());
         }
 
         public static List<Time> getTimesForShift(Shift shift) {
@@ -34,6 +35,16 @@ public final class Utils {
 
         public static List<Time> getTimesForDay(Day day) {
             return getAllTimes().stream().filter(time -> time.getDay().equals(day)).collect(Collectors.toList());
+        }
+
+        public static List<Time> getTimesRange(int first, int last) {
+            ArrayList<Time> times = new ArrayList<>();
+
+            for (int i = first; i <= last; i++) {
+                times.add(new Time(i));
+            }
+
+            return times;
         }
     }
 }

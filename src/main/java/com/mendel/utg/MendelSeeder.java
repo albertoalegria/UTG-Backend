@@ -141,11 +141,11 @@ public class MendelSeeder implements CommandLineRunner {
             Teacher teacher = new Teacher();
             teacher.setFirstName("Daniel Alberto" + i);
             teacher.setLastName("Alegría Sánchez" + i);
-            teacher.setTitle("Dr.");
             teacher.setStudyLevel("PhD");
             teacher.setHours(40);
             teacher.setCheckIn(1);
             teacher.setCheckOut(10);
+            teacher.setImgPath("undefined");
             teacher.setCourses(courses);
             teachers.add(teacher);
         }

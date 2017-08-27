@@ -32,10 +32,6 @@ public class Teacher {
     @Column(name = "TEACHER_LAST_NAME")
     private String lastName;
 
-    @Size(min = 1, max = 5)
-    @Column(name = "TEACHER_TITLE")
-    private String title;
-
     @Size(min = 3, max = 20)
     @Column(name = "TEACHER_STUDY_LEVEL")
     private String studyLevel;
@@ -58,23 +54,14 @@ public class Teacher {
     @Column(name = "TEACHER_CHECK_OUT")
     private Integer checkOut;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
     private List<Course> courses;
 
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Timetable timetable;
 
     public Teacher() {}
-
-    @JsonIgnore
-    public String getName() {
-        return firstName + " " + lastName;
-    }
-
-    public Course getCourse(int index) {
-        return courses.get(index);
-    }
 
     public Long getId() {
         return id;
@@ -98,14 +85,6 @@ public class Teacher {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getStudyLevel() {
@@ -170,7 +149,6 @@ public class Teacher {
                 obj instanceof Teacher &&
                 firstName.equals(((Teacher) obj).getFirstName()) &&
                 lastName.equals(((Teacher) obj).lastName) &&
-                title.equals(((Teacher) obj).getTitle()) &&
                 studyLevel.equals(((Teacher) obj).getStudyLevel()) &&
                 hours.equals(((Teacher) obj).getHours()) &&
                 checkIn.equals(((Teacher) obj).getCheckIn()) &&
